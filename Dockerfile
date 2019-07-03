@@ -1,5 +1,7 @@
 FROM python:3.6-alpine as base
 
+MAINTAINER <rashguir@gmail.com> Nicolas Sicard
+
 FROM base as builder
 
 RUN mkdir /app
