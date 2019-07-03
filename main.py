@@ -22,7 +22,13 @@ for distro_array in distro_dict:
 print(distroObjects[0].Name)
 
 try:
-    connection = mysql.connector.connect(host='db', database='db_name', user='db_user', password='db_password')
+    connection = mysql.connector.connect(
+        host='db', 
+        database='db_name', 
+        user='db_user', 
+        password='db_password',
+        auth_plugin='mysql_native_password'
+    )
 
     if connection.is_connected():
         db_info = connection.get_server_info()
@@ -32,11 +38,11 @@ try:
         cursor.execute("select database();")
         record = cursor.fetchone()
         print("you are connected to - ", record)
-except (Exception, psycopg2.Error) as error:
-    print("Error while attempting to connect to postgresql", error)
-finally:
-    if(connection.is_connected()):
-        cursor.close()
-        connection.close()
-        print("MySQL connection is closed")
+except Error as e:
+    print("Error while attempting to connect to mysql", e)
+# finally:
+    # if(connection.is_connected()):
+    #     cursor.close()
+    #     connection.close()
+    #     print("MySQL connection is closed")
 

@@ -1,17 +1,17 @@
-FROM python:3.6-alpine as base
+FROM python:3.6
 
 MAINTAINER <rashguir@gmail.com> Nicolas Sicard
 
-FROM base as builder
-
 RUN mkdir /app
-RUN apk update && apk add gcc python3-dev musl-dev
 WORKDIR /app
+
+RUN apt-get update
+RUN apt-get install -y \
+        gcc \
+        python3-dev \
+        musl-dev \
+        mysql-client \
+        python3-mysql.connector
+
 COPY requirements.txt /app/requirements.txt
-RUN pip install -r /app/requirements.txt
-
-FROM base
-
-COPY --from=builder /app /usr/local
-RUN apk --no-cache add libpq
-WORKDIR /app
+RUN pip3 install -r /app/requirements.txt
