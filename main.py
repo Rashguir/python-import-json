@@ -7,6 +7,19 @@ class Distro:
     def __init__(self, data):
         self.__dict__ = data
 
+    def forInsert(self):
+        return (self.Name, self.Version, self.Install, self.Owner, self.Kernel)
+
+sqlCreateTableDistros = """CREATE TABLE IF NOT EXISTS Distros (
+    name VARCHAR(20),
+    version VARCHAR(20),
+    install VARCHAR(10),
+    owner VARCHAR(50),
+    kernel VARCHAR(10)
+)"""
+sqlInsertDistro = """INSERT INTO Distros (name, version, install, owner, kernel)
+VALUES (%s, %s, %s, %s, %s)"""
+
 try:
     with open('distros.json', 'r') as f:
         distro_dict = json.load(f)
@@ -35,14 +48,11 @@ try:
         print("You are connected db - version on ", db_info)
 
         cursor = connection.cursor()
-        cursor.execute("select database();")
-        record = cursor.fetchone()
-        print("you are connected to - ", record)
+        cursor.execute(sqlCreateTableDistros)
+
+        for distroObject in distroObjects:
+            cursor.execute(sqlInsertDistro, distroObject.forInsert())
+
+        connection.commit()
 except Error as e:
     print("Error while attempting to connect to mysql", e)
-# finally:
-    # if(connection.is_connected()):
-    #     cursor.close()
-    #     connection.close()
-    #     print("MySQL connection is closed")
-
